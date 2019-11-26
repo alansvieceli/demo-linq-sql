@@ -6,4 +6,8 @@
     <RootNamespace>demo_linq_sql</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>

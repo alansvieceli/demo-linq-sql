@@ -53,29 +53,68 @@ namespace demo_linq_sql
         {
             IniciarDados();
 
-            var r1 = Produtos.Where(p => p.Categoria.Camada == 1 && p.Preco < 900.0);
+            //var r1 = Produtos.Where(p => p.Categoria.Camada == 1 && p.Preco < 900.0);
+            var r1 =
+                from p in Produtos
+                where p.Categoria.Camada == 1 && p.Preco < 900
+                select p;
             Print("CAMADA 1 AND PREÇO < 900:", r1);
 
-            var r2 = Produtos.Where(p => p.Categoria.Nome == "Tools").Select(p => p.Nome);
+            //var r2 = Produtos.Where(p => p.Categoria.Nome == "Tools").Select(p => p.Nome);
+            var r2 =
+                from p in Produtos
+                where p.Categoria.Nome == "Tools"
+                select p.Nome;
             Print("NOMES DOS PRODUTOS DA CATEGORIA 'TOOLS'", r2);
 
-            var r3 = Produtos.Where(p => p.Nome[0] == 'C').Select(p => new { p.Nome, p.Preco, NomeCategoria = p.Categoria.Nome });
+            //var r3 = Produtos.Where(p => p.Nome[0] == 'C').Select(p => new { p.Nome, p.Preco, NomeCategoria = p.Categoria.Nome });
+            var r3 =
+                from p in Produtos
+                where p.Nome[0] == 'C'
+                select new
+                {
+                    p.Nome,
+                    p.Preco,
+                    NomeCategoria = p.Categoria.Nome
+                };
             Print("NOMES INICIADOS COM 'C' E UM OBJETO ANÔNIMO (ANONYMOUS OBJECT)", r3);
 
-            var r4 = Produtos.Where(p => p.Categoria.Camada == 1).OrderBy(p => p.Preco).ThenBy(p => p.Nome);
+            //var r4 = Produtos.Where(p => p.Categoria.Camada == 1).OrderBy(p => p.Preco).ThenBy(p => p.Nome);
+            var r4 =
+                from p in Produtos
+                where p.Categoria.Camada == 1
+                orderby p.Nome
+                orderby p.Preco
+                select p;
             Print("CAMADA 1 ORDENADO POR PRECO E NOME", r4);
 
-            var r5 = r4.Skip(2).Take(4);
+            //var r5 = r4.Skip(2).Take(4);
+            var r5 =
+                (from p in r4
+                 select p)
+                 .Skip(2)
+                 .Take(4);
             Print("CAMADA 1 ORDENADO POR PRECO E NOME PULA(SKIP) 2 PEGA(TAKE) 4", r5);
 
 
             //usando o Default evita dar exeção
-            var r6 = Produtos.FirstOrDefault();
+            //var r6 = Produtos.FirstOrDefault();
+            var r6 =
+                (from p in Produtos
+                 select p)
+                 .FirstOrDefault();
             Console.WriteLine("First or default test1: " + r6);
-            var r7 = Produtos.Where(p => p.Preco > 3000.0).FirstOrDefault();
+            //var r7 = Produtos.Where(p => p.Preco > 3000.0).FirstOrDefault();
+            var r7 =
+                (from p in Produtos
+                 where p.Preco > 3000.0
+                 select p)
+                 .FirstOrDefault();
             Console.WriteLine("First or default test2: " + r7);
             Console.WriteLine();
 
+            //até o r15 é tudo igual. expressão e depois a operação
+            /*
             var r8 = Produtos.Where(p => p.Id == 3).SingleOrDefault();
             Console.WriteLine("Single or default test1: " + r8);
             var r9 = Produtos.Where(p => p.Id == 30).SingleOrDefault();
@@ -97,13 +136,15 @@ namespace demo_linq_sql
             Console.WriteLine("MapReduce (Agregação personalizada) da Categoria 1: " + r15); //mapReduce
             var r152 = Produtos.Where(p => p.Categoria.Id == 5).Select(p => p.Preco).Aggregate(0.0, (x, y) => x + y);
             Console.WriteLine("MapReduce (Agregação personalizada) da Categoria 5: " + r152); //mapReduce
-
             //Map = Select
             //Reduce = Aggregate
-
             Console.WriteLine();
+            */
 
-            var r16 = Produtos.GroupBy(p => p.Categoria);
+            //var r16 = Produtos.GroupBy(p => p.Categoria);
+            var r16 =
+                from p in Produtos
+                group p by p.Categoria;
             foreach (IGrouping<Categoria, Produto> group in r16)
             {
                 Console.WriteLine("Categoria " + group.Key.Nome + ":");
